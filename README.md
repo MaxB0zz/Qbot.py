@@ -10,8 +10,8 @@ in order to use it you need to install:
 
 create an `.env` file next to your bot with the follow credentials:
 
-TOKEN
-GUILD_ID
+TOKEN | 
+GUILD_ID | 
 CHANNEL_ID
 
 and then just run:
