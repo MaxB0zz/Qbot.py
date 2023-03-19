@@ -98,11 +98,11 @@ class DeleteButton(discord.ui.Button):
 
                 embed, size = create_embed_tasks()
                 if size == 0:
-                    await interaction.response.edit_message(embed=embed, view=None)
+                    await interaction.response.edit_message(embed=embed, view=None, delete_after=20)
                 else:
                     view = DropdownView()
                     await interaction.response.edit_message(
-                        embed=embed, view=view)
+                        embed=embed, view=view, delete_after=20)
 
 
             except:
@@ -155,18 +155,18 @@ async def add_task(interaction, date: str, desc: str):
 
     dbase.add({"date": date, "desc": desc, "isNotified": False})
 
-    await interaction.response.send_message("task successfully added!")
+    await interaction.response.send_message("task: " + desc + " successfully added on: " + date)
 
 
 @tree.command(name="tasks", description="see the current tasks", guild=discord.Object(id=guild_id))
 async def get_tasks(interaction):
     embed, size = create_embed_tasks()
     if size == 0:
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, delete_after=20)
     else:
         view = DropdownView()
         await interaction.response.send_message(
-            embed=embed, view=view)
+            embed=embed, view=view, delete_after=20)
 
 
 @tree.command(name="cleartasks", description="clear all tasks", guild=discord.Object(id=guild_id))
@@ -175,7 +175,7 @@ async def clear_tasks(interaction):
     await interaction.response.send_message("Tasks list cleared!")
 
 
-@tree.command(name="deletetask", description="delete one task", guild=discord.Object(id=guild_id))
+@tree.command(name="deletetasks", description="delete one task", guild=discord.Object(id=guild_id))
 async def clear_tasks(interaction, task_id: int):
     try:
         dbase.deleteById(task_id)
@@ -184,5 +184,24 @@ async def clear_tasks(interaction, task_id: int):
         return
     await interaction.response.send_message("Tasks successfully deleted!")
 
+
+@tree.command(name="help", description="show every available command", guild=discord.Object(id=guild_id))
+async def show_help(interaction):
+    embed = discord.Embed(title="Qbot Available Commands", description="Currently available commands for use!",
+                          color=0x72d345)
+    embed.set_thumbnail(url="https://media.discordapp.net/attachments/1070844709704048680/1076135252252180590"
+                            "/IMG_2367.png?width=768&height=768")
+
+    embed.set_footer(text="made by: Menace#0126")
+
+    embed.add_field(name="/addtask [dd/mm/yyyy] [desc]", value="add a new task to your list!")
+
+    embed.add_field(name="/tasks", value="See the currently active tasks and manage them!")
+
+    embed.add_field(name="/deletetask [id]", value="Delete the corresponding task!")
+
+    embed.add_field(name="/cleartasks", value="delete all existing tasks.")
+
+    await interaction.response.send_message(embed=embed)
 
 client.run(token)
